@@ -1,0 +1,41 @@
+1. Postaw prostą aplikację
+
+Wybierz coś lekkiego, np.:
+
+Python Flask z prostym endpointem / zwracającym „Hello World”.
+Albo Node.js Express z podobnym endpointem.
+
+
+Utwórz Dockerfile i zbuduj obraz (możesz użyć OpenShift BuildConfig albo lokalnie i push do registry).
+
+2. Utwórz DeploymentConfig w OpenShift
+
+Ustaw requests/limits dla CPU (np. requests: 100m, limits: 500m), bo HPA działa na podstawie tych wartości.
+Wystaw aplikację przez Service i Route.
+
+3. Skonfiguruj Horizontal Pod Autoscaler
+
+Polecenie:
+    oc autoscale dc/my-app --min=1 --max=5 --cpu-percent=50
+
+To znaczy:
+
+Minimum 1 replika,
+Maksimum 5 replik,
+Skalowanie gdy średnie użycie CPU > 50%.
+
+4. Przetestuj obciążenie
+
+Użyj narzędzia:
+
+ab (Apache Benchmark):
+    ab -n 10000 -c 100 http://<route-url>/
+
+Obserwuj:
+    oc get hpa
+    oc get pods
+
+5. (Opcjonalnie) Dodaj monitoring
+
+Włącz Metrics Server (w OpenShift 3.11 jest wbudowany w cluster metrics).
+Sprawdź w konsoli OpenShift wykresy CPU.
